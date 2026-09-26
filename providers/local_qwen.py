@@ -9,6 +9,7 @@ import urllib.request
 from typing import Any
 
 from providers.http import object_json, request_text, validate_completion
+from providers.streaming import stream_completion
 from providers.types import ChatMessage, Completion, ProviderError
 
 
@@ -21,19 +22,23 @@ class LocalQwenClient:
     def _post(self, suffix: str, payload: dict[str, Any]) -> dict[str, Any]:
         return self._post_to(f"{self.base_url}{suffix}", payload)
 
-    def chat(self, messages: list[ChatMessage], *, max_tokens: int = 1024, temperature: float = 0) -> Completion:
+    def chat(self, messages: list[ChatMessage], *, max_tokens: int = 1024, temperature: float = 0, on_token=None, cancel=None) -> Completion:
         start = time.monotonic()
-        data = self._post(
-            "/chat/completions",
-            {
+        payload = {
                 "model": self.model,
                 "messages": [message.__dict__ for message in messages],
                 "max_tokens": max_tokens,
                 "temperature": temperature,
                 "cache_prompt": False,
                 "chat_template_kwargs": {"enable_thinking": False},
-            },
-        )
+            }
+        if on_token is not None or cancel is not None:
+            payload.update(stream=True, stream_options={"include_usage": True})
+            request = urllib.request.Request(self.base_url + "/chat/completions", data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"})
+            data = stream_completion(request, self.timeout_seconds, on_token, cancel)
+            data["model"] = data.get("model") or self.model
+        else:
+            data = self._post("/chat/completions", payload)
         validate_completion(data, "Local Qwen")
         message = data["choices"][0]["message"]
         usage = data.get("usage", {})

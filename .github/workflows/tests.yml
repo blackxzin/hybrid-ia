@@ -14,5 +14,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -v
+        env:
+          HYBRID_NETWORK_TESTS: '1'
       - run: python main.py --check syntax
       - run: python benchmarks/run.py

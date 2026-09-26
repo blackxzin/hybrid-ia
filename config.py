@@ -27,6 +27,7 @@ class Settings:
     project_root: Path
     local_base_url: str = "http://127.0.0.1:8080/v1"
     local_model: str = "local-qwen"
+    ollama_base_url: str = "http://127.0.0.1:11434/v1"
     router9_base_url: str = "http://127.0.0.1:20128/v1"
     router9_api_key: str | None = None
     router9_enabled: bool = True
@@ -73,6 +74,7 @@ class Settings:
         return cls(
             project_root=root,
             local_base_url=os.getenv("LOCAL_QWEN_BASE_URL", defaults.local_base_url).rstrip("/"),
+            ollama_base_url=os.getenv("OLLAMA_BASE_URL", defaults.ollama_base_url).rstrip("/"),
             local_model=os.getenv("LOCAL_QWEN_MODEL", defaults.local_model),
             router9_base_url=os.getenv("ROUTER9_BASE_URL", defaults.router9_base_url).rstrip("/"),
             router9_api_key=os.getenv("ROUTER9_API_KEY") or None,

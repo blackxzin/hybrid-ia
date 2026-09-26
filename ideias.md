@@ -7,11 +7,11 @@ Atualizado em 26/09/2026. Itens marcados foram implementados e cobertos pela val
 - Ciclo EXPERT limitado a uma correção, com conferência final, preservação do código original e status de divergências.
 - Sanitização também em respostas intermediárias; arquivos privados e contexto local permanecem locais.
 - CLI interativa, memória explícita, sessões opcionais, skills pequenas e ferramentas de leitura/verificação.
-- Benchmark com seis tarefas, três modos, comparação de skills e isolamento de memória. A análise automática é sintática; qualidade funcional e custo monetário ainda não são avaliados.
+- Benchmark com seis tarefas, três modos, comparação de skills e isolamento de memória. A análise padrão é sintática; --functional adiciona critérios funcionais em Docker. Custo monetário ainda não é avaliado.
 - Limites de chamadas e tokens de saída externos; timeout por operação e prazo entre etapas. Não há orçamento rígido de custo ou tokens totais.
-- CI para Python 3.11–3.13. Comparação real de modelos, otimização de hardware, streaming e opiniões independentes continuam pendentes.
+- CI para Python 3.11–3.13. Comparação ampla de modelos, otimização de hardware e opiniões independentes continuam pendentes; seleção de modelos e streaming já estão disponíveis.
 
-A CLI propõe diffs como texto; não aplica patches. O projeto não é um agente que modifica e testa código autonomamente. Checklists marcados descrevem essas capacidades limitadas, documentadas no README.
+A CLI propõe diffs e permite aplicação explícita com --apply-patch --yes; o painel exige prévia e confirmação. Testes exigem autorização separada. O projeto não modifica código autonomamente. Checklists marcados descrevem essas capacidades limitadas, documentadas no README.
 
 ## Colaboração entre Qwen local e 9Router
 
@@ -49,8 +49,8 @@ As skills Caveman, Ponytail e as skills de agentes disponíveis neste ambiente s
 - [x] **Oferecer respostas concisas no estilo Caveman:** opção de resposta curta que preserve os detalhes técnicos e possa ser ativada pelo usuário.
 - [x] **Dar instruções compatíveis com cada papel:** Qwen recebe a skill de implementação; 9Router recebe a skill de revisão ou planejamento; ambos recebem critérios de aceite comuns.
 - [ ] **Medir se cada skill ajuda:** comparar tarefas com e sem a skill e manter apenas instruções que melhorem os resultados sem aumentar demais latência ou contexto.
-- [ ] **Manter uma biblioteca pesquisável:** separar skills usadas com frequência das referências ocasionais e carregar estas últimas somente quando necessário.
-- [ ] **Tratar skills externas como conteúdo a revisar:** verificar instruções e comandos antes de adotar skills baixadas; começar por arquivos locais e confiáveis.
+- [x] **Manter uma biblioteca pesquisável:** separar skills usadas com frequência das referências ocasionais e carregar estas últimas somente quando necessário.
+- [x] **Tratar skills externas como conteúdo a revisar:** verificar instruções e comandos antes de adotar skills baixadas; começar por arquivos locais e confiáveis.
 
 ## Confiabilidade do agente
 
@@ -74,7 +74,7 @@ As skills Caveman, Ponytail e as skills de agentes disponíveis neste ambiente s
 - [ ] **Definir um orçamento por tarefa:** limitar chamadas externas, tokens e tempo; parar quando atingir o limite e explicar o estado ao usuário.
 - [ ] **Usar duas opiniões externas só em casos difíceis:** comparar respostas independentes apenas quando a tarefa justificar o custo e pedir uma verificação objetiva das divergências.
 - [x] **Manter um modo rápido:** pular planejamento e revisão em tarefas simples, sem impedir que o usuário peça uma revisão extra.
-- [ ] **Considerar streaming da resposta:** mostrar o texto conforme é gerado para reduzir a espera percebida, se o servidor local e o cliente suportarem esse fluxo de forma confiável.
+- [x] **Considerar streaming da resposta:** mostrar o texto conforme é gerado para reduzir a espera percebida, se o servidor local e o cliente suportarem esse fluxo de forma confiável.
 
 ## Segurança e previsibilidade
 
@@ -94,3 +94,15 @@ As skills Caveman, Ponytail e as skills de agentes disponíveis neste ambiente s
 - [ ] **Confirmar o backend e o driver usados:** o registro atual mostra `llama.cpp` com Vulkan e RADV POLARIS10; manter esse caminho como baseline e não migrar para ROCm sem confirmar suporte oficial à RX 580 e ao Arch.
 - [ ] **Medir clocks e temperatura durante uma geração:** conferir se a RX 580 mantém clocks sob carga antes de mexer em perfis de energia; qualquer ajuste deve ser temporário, reversível e comparado com o padrão.
 - [ ] **Criar perfis de uso:** perfil “rápido” com modelo menor/contexto moderado e perfil “melhor resposta” com o 27B, deixando claro o custo de tempo de cada um.
+
+
+## Entrega adicional: seis funcionalidades e skills
+
+- [x] Catálogo Qwen/Ollama e troca explícita de modelo pela CLI e painel.
+- [x] Streaming local e FAST remoto, cancelamento; EXPERT mantém resultado até terminar a revisão.
+- [x] Busca lexical local com caminhos/linhas, sanitização e contexto automático opcional.
+- [x] Prévia, aplicação explícita e verificação de patches; rejeição de arquivos desatualizados.
+- [x] Painel web em loopback, sessões, métricas e controles de execução.
+- [x] Benchmark funcional isolado em Docker, com seis contratos e comparação de modelos/skills.
+- [x] Sete skills embutidas, catálogo pesquisável, conteúdo visível no painel e importação textual revisada.
+- [ ] Comparação ampla e repetida para determinar quais skills/modelos ajudam em cada tarefa.

@@ -35,10 +35,11 @@ class ExternalContentSanitizer:
         self.private_paths = {item.strip("/").casefold() for item in private_paths}
         self.max_chars = max_chars
 
-    def sanitize_text(self, text: str) -> tuple[str, int]:
+    def sanitize_text(self, text: str, *, preserve_lines: bool = False) -> tuple[str, int]:
         redactions = 0
         for pattern in SECRET_PATTERNS:
-            text, count = pattern.subn("[REDACTED]", text)
+            replacement = (lambda match: "[REDACTED]" + "\n" * match.group().count("\n")) if preserve_lines else "[REDACTED]"
+            text, count = pattern.subn(replacement, text)
             redactions += count
         return text, redactions
 

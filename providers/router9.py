@@ -9,6 +9,7 @@ import urllib.request
 from typing import Any
 
 from providers.http import request_text, validate_completion
+from providers.streaming import stream_completion
 from providers.types import ChatMessage, Completion, ProviderError
 
 
@@ -81,13 +82,18 @@ class Router9Client:
         response = self._request("GET", "/models")
         return [str(item["id"]) for item in response.get("data", []) if "id" in item]
 
-    def chat(self, model: str, messages: list[ChatMessage], *, max_tokens: int = 800, temperature: float = 0) -> Completion:
+    def chat(self, model: str, messages: list[ChatMessage], *, max_tokens: int = 800, temperature: float = 0, on_token=None, cancel=None) -> Completion:
         start = time.monotonic()
-        data = self._request(
-            "POST",
-            "/chat/completions",
-            {"model": model, "messages": [message.__dict__ for message in messages], "max_tokens": max_tokens, "temperature": temperature, "stream": False},
-        )
+        payload = {"model": model, "messages": [message.__dict__ for message in messages], "max_tokens": max_tokens, "temperature": temperature, "stream": False}
+        if on_token is not None or cancel is not None:
+            if not self.configured:
+                raise ProviderError("9Router externo não está habilitado")
+            payload.update(stream=True, stream_options={"include_usage": True})
+            request = urllib.request.Request(self.base_url + "/chat/completions", data=json.dumps(payload).encode(), headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
+            data = stream_completion(request, self.timeout_seconds, on_token, cancel)
+            data["model"] = data.get("model") or model
+        else:
+            data = self._request("POST", "/chat/completions", payload)
         try:
             return self._completion(data, model, start)
         except (KeyError, IndexError, TypeError, AttributeError) as exc:

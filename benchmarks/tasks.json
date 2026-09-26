@@ -1,0 +1,32 @@
+[
+  {
+    "id": "simple_clamp",
+    "category": "simple",
+    "request": "Escreva somente Python: uma função clamp(x, lo, hi) que limita x ao intervalo inclusivo e lança ValueError se lo > hi."
+  },
+  {
+    "id": "medium_debug",
+    "category": "medium",
+    "request": "Debugue este código Python e devolva uma versão corrigida com explicação curta: def average(values): return sum(values) / len(values). O requisito é aceitar iteráveis, rejeitar sequência vazia com ValueError e evitar consumir um gerador duas vezes."
+  },
+  {
+    "id": "complex_refactor_plan",
+    "category": "complex",
+    "request": "Para um projeto Python que recebe arquivos de usuários, proponha e implemente um módulo pequeno de validação de caminhos. Requisitos: impedir path traversal, aceitar apenas arquivos dentro de uma raiz configurada, bloquear .env, .git, secrets e extensões .pem/.key, e retornar motivos claros. Inclua testes unittest."
+  },
+  {
+    "id": "simple_unique",
+    "category": "simple",
+    "request": "Escreva Python: unique(values) deve remover duplicatas preservando a ordem para iteráveis de elementos hashable. Inclua testes para gerador e vazio."
+  },
+  {
+    "id": "medium_json",
+    "category": "medium",
+    "request": "Corrija bugs neste contrato: parse_object(text) deve retornar dict de JSON, lançar ValueError para JSON inválido, lista ou null; não registrar conteúdo de erro que possa conter segredos. Inclua testes unittest."
+  },
+  {
+    "id": "complex_budget",
+    "category": "complex",
+    "request": "Implemente uma classe Python de orçamento para chamadas de API: máximo de chamadas e tokens reservados, validar limites negativos e reservar antes de chamar. Falhas contam como tentativas. Inclua testes para esgotamento e arquitetura sem dependências."
+  }
+]
